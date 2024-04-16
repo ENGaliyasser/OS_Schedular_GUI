@@ -21,6 +21,7 @@
 QVector<int> inProgress;
 int totalWidth = 0; // Total width of all rectangles
 int total_time=0;
+
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -28,6 +29,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_algorithm_comboBox_currentTextChanged(const QString &arg1)
 {
+    ui->data_table_2->hide();
+    ui->AddDynamically->hide();
     if( arg1=="3. Priority"){
         ui->preemptive->show();
         ui->Non_preemptive->show();
@@ -37,6 +40,7 @@ void MainWindow::on_algorithm_comboBox_currentTextChanged(const QString &arg1)
         ui->quantum_value->hide();
 
         ui->data_table->showColumn(3);
+        ui->data_table_2->showColumn(3);
     }
     else if(arg1=="2. SJF" ){
         ui->preemptive->show();
@@ -47,6 +51,7 @@ void MainWindow::on_algorithm_comboBox_currentTextChanged(const QString &arg1)
         ui->quantum_value->hide();
 
         ui->data_table->hideColumn(3);
+        ui->data_table_2->hideColumn(3);
     }
     else if(arg1=="4. Round Robin" ){
         ui->preemptive->hide();
@@ -57,6 +62,7 @@ void MainWindow::on_algorithm_comboBox_currentTextChanged(const QString &arg1)
         ui->quantum_value->show();
 
         ui->data_table->hideColumn(3);
+        ui->data_table_2->hideColumn(3);
 
     }
     else if("1. FCFS"){
@@ -68,6 +74,7 @@ void MainWindow::on_algorithm_comboBox_currentTextChanged(const QString &arg1)
         ui->quantum_value->hide();
 
         ui->data_table->hideColumn(3);
+        ui->data_table_2->hideColumn(3);
     }
 }
 
@@ -126,6 +133,14 @@ bool MainWindow::vaild_data(){
 
 void MainWindow::on_simulate_button_clicked()
 {
+    inProgress.clear();
+    QTimer *timer = new QTimer(this);
+    timer->stop();
+    timer->setInterval(0);
+    static int secondsElapsed = 0;
+    ui->data_table_2->show();
+    ui->AddDynamically->show();
+    ui->data_table_2->setRowCount(1);
     if(ui->no_of_process_value->value()>0 && vaild_data()){
         QVector<Process>v = get_data_from_table();
         QString algorithm =ui->algorithm_comboBox->currentText();
@@ -170,15 +185,18 @@ void MainWindow::on_simulate_button_clicked()
         }
         qDebug()<<"Total time = "<<totaltime;
         //Start the timer
-        QTimer *timer = new QTimer(this);
+
 
         connect(timer, &QTimer::timeout, [=]() {
-            static int secondsElapsed = 0;
+
             ui->timerLabel->setText(QString::number(secondsElapsed++) + " seconds");
 
             // Stop the timer after 60 seconds
             if (secondsElapsed >totaltime) {
+                secondsElapsed = 0;
                 timer->stop();
+                ui->data_table_2->hide();
+                ui->AddDynamically->hide();
                 delete timer; // Cleanup the timer object
             }
         });
@@ -191,6 +209,7 @@ void MainWindow::on_simulate_button_clicked()
 }
 
 void MainWindow::draw(QVector<Process>v,float avg_w){
+    ui->gantt_chart->clear();
     int n=v.size();
     ui->gantt_chart->setColumnCount(n);
     ui->gantt_chart->setRowCount(1);
@@ -221,6 +240,7 @@ void MainWindow::draw(QVector<Process>v,float avg_w){
 
 void MainWindow::set_process_time_line(QVector<Process>v){
     int n=v.size();
+    ui->timeline->clear();
     ui->timeline->setColumnCount(3);
     ui->timeline->setRowCount(n);
     QStringList h;
@@ -245,7 +265,7 @@ public:
     Widget(QWidget *parent = nullptr) : QWidget(parent), currentIndex(0) {
         connect(timer, &QTimer::timeout, this, &Widget::updateValue);
         timer->start(1000); // Trigger every 1 second
-        setFixedSize(2000, 200);
+        setFixedSize(3000, 200);
     }
 
     QSize sizeHint() const {
@@ -339,4 +359,58 @@ void MainWindow::openWidget() {
     scrollArea->show();
 }
 
+
+
+void MainWindow::on_AddDynamically_clicked()
+{
+    inProgress.clear();
+    QVector<Process>v = get_data_from_table();
+    int priority=0;
+    if(ui->algorithm_comboBox->currentText()=="3. Priority"){
+        priority = ui->data_table_2->item(0,3)->text().toInt();
+    }
+    Process p(ui->data_table_2->item(0,0)->text().toInt(),
+              ui->data_table_2->item(0,1)->text().toInt(),
+              ui->data_table_2->item(0,2)->text().toInt(),
+              priority);
+    v.push_back(p);
+    QString algorithm =ui->algorithm_comboBox->currentText();
+    QString algo_type;
+    if(algorithm =="3. Priority" || algorithm=="2. SJF"){
+        if(ui->preemptive->isChecked()){
+            algo_type ="preemptive";
+        }else{
+            algo_type="non_preemptive";
+        }
+    }
+    float avg_waiting=0;
+    QVector<Process>processes;
+    if(algorithm=="1. FCFS"){
+        processes=FCFS_Algorithm::fcfs(v,avg_waiting);
+    }
+    else if(algorithm=="2. SJF"){
+        if(algo_type=="preemptive"){
+            processes=findavgTime(v,avg_waiting);
+        }else{
+            processes=sjf_algorithm::sjf_non_preemptive(v,avg_waiting);
+        }
+    }
+    else if(algorithm=="3. Priority"){
+        if(algo_type=="preemptive"){
+            processes=priority_algorithm::Priority_preemitive(v,avg_waiting);
+        }else{
+            processes=priority_algorithm::Priority_nonPreemptive(v,avg_waiting);
+        }
+    }
+    else if(algorithm=="4. Round Robin"){
+        int quantum=ui->quantum_value->value();
+        if(quantum==0){
+            QMessageBox::critical(this,"error","please enter vaild quantum !!");
+            return;
+        }
+        processes=round_robin::RR(v,quantum,avg_waiting);
+    }
+    draw(processes,avg_waiting);
+    set_process_time_line(processes);
+}
 

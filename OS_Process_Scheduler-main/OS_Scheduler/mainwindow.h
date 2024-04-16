@@ -33,6 +33,8 @@ private slots:
 
 
 
+    void on_AddDynamically_clicked();
+
 private:
     Ui::MainWindow *ui;
     QScrollArea* scrollArea;
