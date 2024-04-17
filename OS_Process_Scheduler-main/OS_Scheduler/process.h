@@ -19,7 +19,7 @@ public:
     int get_process_burst_time()const;
     int get_process_arrival_time()const;
     int get_process_priority()const;
-    int get_start_time();
+    int get_start_time()const;
     int get_end_time();
 
     void set_process_Id(int);
