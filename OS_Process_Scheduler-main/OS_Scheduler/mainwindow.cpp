@@ -392,6 +392,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
                                        "QPushButton { background-color: #343434; }"); // Set your default button color
     ui->LiveGantt->setStyleSheet("QPushButton:hover { background-color: #121212; }" // Set your desired hover color
                                        "QPushButton { background-color: #343434; }"); // Set your default button color
+    ui->AddDynamically->setStyleSheet("QPushButton:hover { background-color: #121212; }" // Set your desired hover color
+                                 "QPushButton { background-color: #343434; }"); // Set your default button color
 
 
 
