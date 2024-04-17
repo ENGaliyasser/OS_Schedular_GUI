@@ -8,19 +8,16 @@
 #include"sjf_algorithm.h"
 #include"priority_algorithm.h"
 #include "round_robin.h"
-#include <thread>
-#include <chrono>
 #include "preemative_sjf.h"
 #include <QPainter>
 #include <QPaintEvent>
 #include <QFont>
-#include <mutex>
 #include <QTimer>
 #include <QDebug>
 #include <QHash>
 QVector<int> inProgress;
 int totalWidth = 0; // Total width of all rectangles
-int total_time=0;
+int totaltime=1;
 
 MainWindow::~MainWindow()
 {
@@ -180,7 +177,7 @@ void MainWindow::on_simulate_button_clicked()
             }
             processes=round_robin::RR(v,quantum,avg_waiting);
         }
-        int totaltime=0;
+
         for(int i=0;i<processes.length();i++){
             totaltime+= processes[i].get_process_burst_time();
         }
@@ -412,17 +409,17 @@ void MainWindow::openWidget() {
 
     // Set up the scroll area
     scrollArea->setWidget(widget);
-    scrollArea->setWidgetResizable(true); // Resize the widget to the size of the scroll area
+
+    // Resize the widget to the size of the scroll area
+    scrollArea->setWidgetResizable(true);
 
     // Set scroll policy for horizontal scrollbar
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     // Set background color for the widget
-    // Set background color for the widget
     QColor backgroundColor("#121212"); // RGBA color: RGB(170, 0, 0), Alpha: 100 (transparency)
     QPalette pal = widget->palette();
     pal.setColor(QPalette::Window, backgroundColor); // Use Window role to set the background color
-    widget->setWindowTitle("Live Scheduler");
 
     widget->setAutoFillBackground(true);
     widget->setPalette(pal);
@@ -483,6 +480,8 @@ void MainWindow::on_AddDynamically_clicked()
         }
         processes=round_robin::RR(v,quantum,avg_waiting);
     }
+    ui->avg_wait->setText("Average Waiting Time:           "+QString::number(avg_waiting));
+    totaltime+=ui->data_table_2->item(0,1)->text().toInt();
     draw(processes,avg_waiting);
     set_process_time_line(processes);
 }
