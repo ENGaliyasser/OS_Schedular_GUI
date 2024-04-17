@@ -10,7 +10,6 @@
 #include "round_robin.h"
 #include <thread>
 #include <chrono>
-#include "preemative_sjf.h"
 #include <QPainter>
 #include <QPaintEvent>
 #include <QFont>
@@ -18,7 +17,9 @@
 #include <QTimer>
 #include <QDebug>
 #include <QHash>
+#include "preemative_sjf.h"
 QVector<int> inProgress;
+
 int totalWidth = 0; // Total width of all rectangles
 int total_time=0;
 
@@ -136,6 +137,7 @@ void MainWindow::on_simulate_button_clicked()
     inProgress.clear();
     QTimer *timer = new QTimer(this);
     timer->stop();
+
     timer->setInterval(0);
     static int secondsElapsed = 0;
     ui->data_table_2->show();
@@ -156,10 +158,11 @@ void MainWindow::on_simulate_button_clicked()
         QVector<Process>processes;
         if(algorithm=="1. FCFS"){
             processes=FCFS_Algorithm::fcfs(v,avg_waiting);
+            ui->centralwidget->setStyleSheet("background-color: #F5B7B1;");
         }
         else if(algorithm=="2. SJF"){
             if(algo_type=="preemptive"){
-                processes=findavgTime(v,avg_waiting);
+                processes= findavgTime(v,avg_waiting);
             }else{
                 processes=sjf_algorithm::sjf_non_preemptive(v,avg_waiting);
             }
@@ -200,6 +203,7 @@ void MainWindow::on_simulate_button_clicked()
                 delete timer; // Cleanup the timer object
             }
         });
+
         timer->start(1000); // Update every second
 
 
@@ -319,6 +323,14 @@ private:
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
 {
+    QPalette pal = qApp->palette();
+    pal.setColor(QPalette::Window, QColor("#EAD2A8")); // Creamy white background
+    qApp->setPalette(pal);
+
+    // Set button color to light red
+
+
+    // Light red header color
     ui->setupUi(this);
 
     QString init="1. FCFS";
@@ -390,7 +402,7 @@ void MainWindow::on_AddDynamically_clicked()
     }
     else if(algorithm=="2. SJF"){
         if(algo_type=="preemptive"){
-            processes=findavgTime(v,avg_waiting);
+            processes= findavgTime(v,avg_waiting);
         }else{
             processes=sjf_algorithm::sjf_non_preemptive(v,avg_waiting);
         }

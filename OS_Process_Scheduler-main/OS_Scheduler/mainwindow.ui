@@ -17,15 +17,15 @@
    <widget class="QLabel" name="project_label">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>10</y>
-      <width>251</width>
-      <height>61</height>
+      <x>450</x>
+      <y>0</y>
+      <width>351</width>
+      <height>71</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>22</pointsize>
+      <pointsize>30</pointsize>
       <bold>true</bold>
      </font>
     </property>
@@ -38,18 +38,18 @@
      <rect>
       <x>32</x>
       <y>92</y>
-      <width>541</width>
+      <width>581</width>
       <height>141</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
+       <item alignment="Qt::AlignLeft">
         <widget class="QLabel" name="algo_label">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>15</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -96,7 +96,7 @@
         <widget class="QLabel" name="no_process_label">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>15</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -117,8 +117,8 @@
      <rect>
       <x>32</x>
       <y>240</y>
-      <width>551</width>
-      <height>33</height>
+      <width>581</width>
+      <height>37</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -129,7 +129,7 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
+         <pointsize>15</pointsize>
          <bold>true</bold>
         </font>
        </property>
@@ -140,8 +140,16 @@
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <property name="spacing">
+        <number>8</number>
+       </property>
        <item>
         <widget class="QRadioButton" name="Non_preemptive">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Non Preemptive</string>
          </property>
@@ -151,6 +159,7 @@
         <widget class="QRadioButton" name="preemptive">
          <property name="font">
           <font>
+           <pointsize>12</pointsize>
            <kerning>true</kerning>
           </font>
          </property>
@@ -168,8 +177,8 @@
      <rect>
       <x>30</x>
       <y>280</y>
-      <width>551</width>
-      <height>31</height>
+      <width>581</width>
+      <height>35</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -177,7 +186,7 @@
       <widget class="QLabel" name="quantum_label">
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
+         <pointsize>15</pointsize>
          <bold>true</bold>
         </font>
        </property>
@@ -195,18 +204,18 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>327</y>
-      <width>550</width>
-      <height>261</height>
+      <y>340</y>
+      <width>421</width>
+      <height>291</height>
      </rect>
     </property>
    </widget>
    <widget class="QPushButton" name="simulate_button">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>600</y>
-      <width>161</width>
+      <x>460</x>
+      <y>480</y>
+      <width>211</width>
       <height>51</height>
      </rect>
     </property>
@@ -228,7 +237,7 @@
     <property name="geometry">
      <rect>
       <x>730</x>
-      <y>530</y>
+      <y>550</y>
       <width>401</width>
       <height>61</height>
      </rect>
@@ -250,9 +259,9 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>90</y>
-      <width>401</width>
+      <x>750</x>
+      <y>230</y>
+      <width>361</width>
       <height>311</height>
      </rect>
     </property>
@@ -277,9 +286,9 @@
    <widget class="QPushButton" name="LiveGantt">
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>600</y>
-      <width>151</width>
+      <x>460</x>
+      <y>560</y>
+      <width>211</width>
       <height>51</height>
      </rect>
     </property>
@@ -290,11 +299,16 @@
    <widget class="QLabel" name="timerLabel">
     <property name="geometry">
      <rect>
-      <x>860</x>
-      <y>600</y>
+      <x>580</x>
+      <y>400</y>
       <width>141</width>
       <height>41</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
     </property>
     <property name="text">
      <string/>
@@ -303,15 +317,15 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>780</x>
-      <y>600</y>
+      <x>480</x>
+      <y>400</y>
       <width>91</width>
       <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>15</pointsize>
       <bold>true</bold>
      </font>
     </property>
@@ -319,16 +333,16 @@
      <string>Timer :</string>
     </property>
    </widget>
-   <widget class="QWidget" name="horizontalLayoutWidget">
+   <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
       <x>630</x>
-      <y>450</y>
+      <y>90</y>
       <width>521</width>
-      <height>72</height>
+      <height>123</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_7">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
       <widget class="QTableWidget" name="data_table_2">
        <property name="rowCount">

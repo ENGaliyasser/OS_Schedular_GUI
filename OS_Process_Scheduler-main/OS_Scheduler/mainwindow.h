@@ -21,6 +21,7 @@ public:
     void draw(QVector<Process>v,float a);
     void set_process_time_line(QVector<Process>v);
     bool vaild_data();
+
 private slots:
 
     void on_algorithm_comboBox_currentTextChanged(const QString &arg1);
