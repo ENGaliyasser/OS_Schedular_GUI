@@ -10,6 +10,7 @@
 #include "round_robin.h"
 #include <thread>
 #include <chrono>
+#include "preemative_sjf.h"
 #include <QPainter>
 #include <QPaintEvent>
 #include <QFont>
@@ -17,9 +18,7 @@
 #include <QTimer>
 #include <QDebug>
 #include <QHash>
-#include "preemative_sjf.h"
 QVector<int> inProgress;
-
 int totalWidth = 0; // Total width of all rectangles
 int total_time=0;
 
@@ -137,11 +136,11 @@ void MainWindow::on_simulate_button_clicked()
     inProgress.clear();
     QTimer *timer = new QTimer(this);
     timer->stop();
-
     timer->setInterval(0);
     static int secondsElapsed = 0;
     ui->data_table_2->show();
     ui->AddDynamically->show();
+
     ui->data_table_2->setRowCount(1);
     if(ui->no_of_process_value->value()>0 && vaild_data()){
         QVector<Process>v = get_data_from_table();
@@ -158,11 +157,10 @@ void MainWindow::on_simulate_button_clicked()
         QVector<Process>processes;
         if(algorithm=="1. FCFS"){
             processes=FCFS_Algorithm::fcfs(v,avg_waiting);
-            ui->centralwidget->setStyleSheet("background-color: #F5B7B1;");
         }
         else if(algorithm=="2. SJF"){
             if(algo_type=="preemptive"){
-                processes= findavgTime(v,avg_waiting);
+                processes=findavgTime(v,avg_waiting);
             }else{
                 processes=sjf_algorithm::sjf_non_preemptive(v,avg_waiting);
             }
@@ -203,7 +201,6 @@ void MainWindow::on_simulate_button_clicked()
                 delete timer; // Cleanup the timer object
             }
         });
-
         timer->start(1000); // Update every second
 
 
@@ -230,14 +227,18 @@ void MainWindow::draw(QVector<Process>v,float avg_w){
         ui->gantt_chart->setItem(0,i, new QTableWidgetItem);
         ui->gantt_chart->item(0,i)->setText(s);
         ui->gantt_chart->item(0,i)->setTextAlignment(Qt::AlignCenter);
-        ui->gantt_chart->item(0,i)->setBackground(Qt::gray);
+        QColor backgroundColor(170,0,0,100);
+        ui->gantt_chart->item(0,i)->setBackground(backgroundColor);
+        QColor Color(255,255,255);
+        ui->gantt_chart->item(0,i)->setForeground(Color);
+
     }
     for(int i=0;i<n;i++){
         if(v[i].get_process_burst_time())
             ui->gantt_chart->setColumnWidth(i,  v[i].get_process_burst_time()*1080/total_time);
     }
     ui->gantt_chart->setHorizontalHeaderLabels(h2);
-    ui->avg_wait->setText("Average Waiting Time: "+QString::number(avg_w));
+    ui->avg_wait->setText("Average Waiting Time:           "+QString::number(avg_w));
     //timer.start(total_time * 1000);
    // elapsedTimer.start();
 }
@@ -291,9 +292,38 @@ protected:
 
         // Draw rectangles and values
         for (int i = 0; i < values.size(); ++i) {
+            // QRect rect(margin + i * rectWidth, margin, rectWidth, height() - 2 * margin);
+            // // Set the text color and font
+            // QColor textColor(0, 0, 0); // White color
+            // QFont textFont("Berlin Sans FB Demi", 12); // Example font
+            // painter.setPen(textColor);
+            // painter.setFont(textFont);
+
+            // painter.drawText(rect, Qt::AlignCenter, QString::number(values[i]));
+            // // Set the outline color of the rectangle
+            // QColor backgroundColor(52,52,52);
+            // painter.setPen(backgroundColor); // Set your desired outline color using RGB or hex
+            // // Set the fill color of the rectangle
+            // QColor fillColor(170, 0, 0,);
+            // painter.setBrush(fillColor);
+            // painter.drawRect(rect);
+
             QRect rect(margin + i * rectWidth, margin, rectWidth, height() - 2 * margin);
-            painter.drawText(rect, Qt::AlignCenter, QString::number(values[i]));
+
+            // Set the fill color of the rectangle
+            QColor fillColor(170, 0, 0, 100);
+            painter.setBrush(fillColor);
+
+            // Draw filled rectangle
             painter.drawRect(rect);
+
+            // Set the text color and font
+            QColor textColor(255, 255, 255); // White color
+            QFont textFont("Berlin Sans FB Demi", 12); // Example font
+            painter.setPen(textColor);
+            painter.setFont(textFont);
+
+            painter.drawText(rect, Qt::AlignCenter, QString::number(values[i]));
         }
     }
 
@@ -323,14 +353,6 @@ private:
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
 {
-    QPalette pal = qApp->palette();
-    pal.setColor(QPalette::Window, QColor("#EAD2A8")); // Creamy white background
-    qApp->setPalette(pal);
-
-    // Set button color to light red
-
-
-    // Light red header color
     ui->setupUi(this);
 
     QString init="1. FCFS";
@@ -343,12 +365,38 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     h<<"process id"<<"burst time"<<"arrival time"<<"priority";
     ui->data_table->setHorizontalHeaderLabels(h);
     ui->data_table->setItem(0,0, new QTableWidgetItem);
+    // Set background color for header sections
+    ui->data_table->horizontalHeader()->setStyleSheet("QHeaderView::section { background-color: #343434; color: white;font-family: Berlin Sans FB Demi; font-size: 12px; }"); // Set your desired background color and text color
+    ui->data_table->verticalHeader()->setStyleSheet("QHeaderView::section { background-color: #343434; color: white;font-family: Berlin Sans FB Demi; font-size: 12px; }"); // Set your desired background color and text color
+    ui->data_table->setStyleSheet( "QTableWidget::item {background-color: rgb(52, 52, 52); color: white;text-align: center; };"
+                                  "QTableWidget { text-align: center; };");
+
+    ui->gantt_chart->horizontalHeader()->setStyleSheet("QHeaderView::section { background-color: #343434; color: white;font-family: Berlin Sans FB Demi; font-size: 12px; }"); // Set your desired background color and text color
+    ui->gantt_chart->verticalHeader()->setStyleSheet("QHeaderView::section { background-color: #343434; color: white;font-family: Berlin Sans FB Demi; font-size: 12px; }"); // Set your desired background color and text color
+
+    ui->data_table_2->horizontalHeader()->setStyleSheet("QHeaderView::section { background-color: #343434; color: white;font-family: Berlin Sans FB Demi; font-size: 12px; }"); // Set your desired background color and text color
+    ui->data_table_2->verticalHeader()->setStyleSheet("QHeaderView::section { background-color: #343434; color: white;font-family: Berlin Sans FB Demi; font-size: 12px; }"); // Set your desired background color and text color
+    ui->data_table_2->setStyleSheet( "QTableWidget::item {background-color: rgb(52, 52, 52); color: white;text-align: center; };"
+                                  "QTableWidget { text-align: center; };");
+
+    ui->timeline->horizontalHeader()->setStyleSheet("QHeaderView::section { background-color: #343434; color: white;font-family: Berlin Sans FB Demi; font-size: 12px; }"); // Set your desired background color and text color
+    ui->timeline->verticalHeader()->setStyleSheet("QHeaderView::section { background-color: #343434; color: white;font-family: Berlin Sans FB Demi; font-size: 12px; }"); // Set your desired background color and text color
+    ui->timeline->setStyleSheet( "QTableWidget::item {background-color: rgb(52, 52, 52); color: white;text-align: center; };"
+                                  "QTableWidget { text-align: center; };");
+
     ui->quantum_value->setValue(2);
 
     //QPushButton *button = new QPushButton("Live Gantt chart", this);
     connect(ui->LiveGantt, &QPushButton::clicked, this, &MainWindow::openWidget);
+    ui->simulate_button->setStyleSheet("QPushButton:hover { background-color: #121212; }" // Set your desired hover color
+                                       "QPushButton { background-color: #343434; }"); // Set your default button color
+    ui->LiveGantt->setStyleSheet("QPushButton:hover { background-color: #121212; }" // Set your desired hover color
+                                       "QPushButton { background-color: #343434; }"); // Set your default button color
+
+
 
 }
+
 
 void MainWindow::openWidget() {
     // Create a scroll area
@@ -367,8 +415,19 @@ void MainWindow::openWidget() {
     // Set scroll policy for horizontal scrollbar
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
+    // Set background color for the widget
+    // Set background color for the widget
+    QColor backgroundColor("#121212"); // RGBA color: RGB(170, 0, 0), Alpha: 100 (transparency)
+    QPalette pal = widget->palette();
+    pal.setColor(QPalette::Window, backgroundColor); // Use Window role to set the background color
+    widget->setWindowTitle("Live Scheduler");
+
+    widget->setAutoFillBackground(true);
+    widget->setPalette(pal);
+
     // Show the scroll area
     scrollArea->show();
+
 }
 
 
@@ -402,7 +461,7 @@ void MainWindow::on_AddDynamically_clicked()
     }
     else if(algorithm=="2. SJF"){
         if(algo_type=="preemptive"){
-            processes= findavgTime(v,avg_waiting);
+            processes=findavgTime(v,avg_waiting);
         }else{
             processes=sjf_algorithm::sjf_non_preemptive(v,avg_waiting);
         }
