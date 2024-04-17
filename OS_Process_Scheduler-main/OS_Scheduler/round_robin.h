@@ -1,3 +1,6 @@
+/**********************************************/
+/* @author : Mohamed Abdel Hamid              */
+/**********************************************/
 #ifndef ROUND_ROBIN_H
 #define ROUND_ROBIN_H
 #include "process.h"
