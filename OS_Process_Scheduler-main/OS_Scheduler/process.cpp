@@ -24,7 +24,7 @@ int Process::get_process_priority()const{
 int Process::get_process_Id()const{
     return process_ID;
 }
-int Process::get_start_time(){
+int Process::get_start_time()const{
     return start_time;
 }
 int Process::get_end_time(){
