@@ -174,6 +174,9 @@ public:
 
     static void startScheduling() {
         timer = queueOfAllProcesses[0].arrivalTime;
+        for(int i=0;i<timer;i++){
+            inProgress.push_back(0);
+        }
         lastArrivedProcessIndex = -1;
         /* Execute first processes */
         for (int i = 0; i < Processes::getNoOfProcess(); i++)
@@ -334,7 +337,19 @@ int RoundRobin::RunningProcess = 0;
 QVector<Process> round_robin::RR(QVector<Process> p, int tq,float &w_time) {
 
     QVector< Process > re;
-
+    RoundRobin::readyQueue.clear();
+    RoundRobin::runningProcesses.clear();
+    RoundRobin::firstExecution.clear();
+    RoundRobin::complete.clear();
+    RoundRobin::queueOfAllProcesses.clear();
+    Processes::noOfProcess=0;
+    RoundRobin::quantum = 0;
+    RoundRobin::timer = 0;
+    RoundRobin::lastArrivedProcessIndex = 0;
+    RoundRobin::avgWait = 0;
+    RoundRobin::avgTurn = 0;
+    GanttChart::n = 0;
+    RoundRobin::RunningProcess = 0;
     for(int i=0; i<p.size();i++){
 
         RoundRobin::addProcess(p[i].get_process_arrival_time(), p[i].get_process_burst_time());
