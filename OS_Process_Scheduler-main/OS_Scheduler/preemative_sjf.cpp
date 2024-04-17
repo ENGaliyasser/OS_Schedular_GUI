@@ -110,6 +110,8 @@ void findTurnAroundTime()
 QVector<Process> findavgTime(QVector<Process>v, float& avg_waiting)
 {
     Pro in_p;
+    proc.clear();
+    GanttChart.clear();
     for(int i =0 ;i<v.size();i++){
         in_p.pid=v.at(i).get_process_Id();
         in_p.bt=v.at(i).get_process_burst_time();
