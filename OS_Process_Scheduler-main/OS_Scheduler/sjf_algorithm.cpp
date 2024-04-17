@@ -1,4 +1,4 @@
-#include "non_preemative_sjf.h"
+#include "sjf_algorithm.h"
 
 #include <algorithm> // for std::sort
 #include <climits>   // for INT_MAX
@@ -14,6 +14,7 @@ float calculate_avg_waiting(const QVector<Process>& execution_order) {
     return static_cast<float>(total_waiting_time) / execution_order.size();
 }
 
+
 // SJF non-preemptive scheduling algorithm
 QVector<Process> sjf_algorithm::sjf_non_preemptive(QVector<Process> processes, float& avg_waiting) {
     // Sort processes by arrival time
@@ -23,6 +24,14 @@ QVector<Process> sjf_algorithm::sjf_non_preemptive(QVector<Process> processes, f
 
     QVector<Process> execution_order; // Store the order of execution
     int curr_time = 0; // Current time
+
+    // Push "idle" into inProgress until the first process starts
+    if (!processes.isEmpty() && processes[0].get_process_arrival_time() > 0) {
+        for (int i = 0; i < processes[0].get_process_arrival_time(); ++i) {
+            inProgress.push_back(0); // Assuming 0 represents "idle"
+        }
+        curr_time = processes[0].get_process_arrival_time();
+    }
 
     while (!processes.isEmpty()) {
         int shortest_index = -1;
@@ -46,10 +55,12 @@ QVector<Process> sjf_algorithm::sjf_non_preemptive(QVector<Process> processes, f
             shortest_process.set_end_time(curr_time + shortest_process.get_process_burst_time());
             execution_order.push_back(shortest_process);
 
-            curr_time += shortest_process.get_process_burst_time();
-
             // Update inProgress with the ID of the process being executed
-            inProgress.push_back(shortest_process.get_process_Id());
+            for (int i = 0; i < shortest_process.get_process_burst_time(); i++) {
+                inProgress.push_back(shortest_process.get_process_Id());
+            }
+
+            curr_time += shortest_process.get_process_burst_time();
         } else {
             // If no process is found at current time, move to the next arrival time
             curr_time = processes[0].get_process_arrival_time();
