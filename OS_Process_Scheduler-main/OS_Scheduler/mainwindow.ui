@@ -547,10 +547,10 @@ hover :{ background-color: rgb(0, 0, 0); };</string>
    <widget class="QLabel" name="avg_wait">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>430</y>
+      <x>500</x>
+      <y>400</y>
       <width>531</width>
-      <height>61</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="font">
@@ -967,6 +967,30 @@ hover :{ background-color: rgb(0, 0, 0); };</string>
     </property>
     <property name="text">
      <string>Add</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="avg_turn">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>470</y>
+      <width>531</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Berlin Sans FB Demi</family>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"> border-style: dashed;
+  border-color: #343434;
+  border-width: 5px;</string>
+    </property>
+    <property name="text">
+     <string>Average Turnaround Time : </string>
     </property>
    </widget>
   </widget>

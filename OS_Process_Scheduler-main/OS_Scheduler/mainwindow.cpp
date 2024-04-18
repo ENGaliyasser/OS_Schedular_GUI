@@ -17,8 +17,9 @@
 #include <QHash>
 QVector<int> inProgress;
 int totalWidth = 0; // Total width of all rectangles
-int totaltime=1;
-
+int totaltime=0;
+int TTforAVG=0;
+int NforAVG=0;
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -27,6 +28,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_algorithm_comboBox_currentTextChanged(const QString &arg1)
 {
     ui->data_table_2->hide();
+    ui->label_3->hide();
     ui->AddDynamically->hide();
     if( arg1=="3. Priority"){
         ui->preemptive->show();
@@ -130,6 +132,8 @@ bool MainWindow::vaild_data(){
 
 void MainWindow::on_simulate_button_clicked()
 {
+    NforAVG=0;
+    TTforAVG=0;
     inProgress.clear();
     QTimer *timer = new QTimer(this);
     timer->stop();
@@ -137,10 +141,14 @@ void MainWindow::on_simulate_button_clicked()
     static int secondsElapsed = 0;
     ui->data_table_2->show();
     ui->AddDynamically->show();
-
+    ui->label_3->show();
     ui->data_table_2->setRowCount(1);
     if(ui->no_of_process_value->value()>0 && vaild_data()){
         QVector<Process>v = get_data_from_table();
+        for(int i=0;i<v.size();i++){
+            TTforAVG+=v[i].get_process_burst_time();
+        }
+        NforAVG = v.size();
         QString algorithm =ui->algorithm_comboBox->currentText();
         QString algo_type;
         if(algorithm =="3. Priority" || algorithm=="2. SJF"){
@@ -195,6 +203,7 @@ void MainWindow::on_simulate_button_clicked()
                 timer->stop();
                 ui->data_table_2->hide();
                 ui->AddDynamically->hide();
+                ui->label_3->hide();
                 delete timer; // Cleanup the timer object
             }
         });
@@ -209,6 +218,7 @@ void MainWindow::on_simulate_button_clicked()
 void MainWindow::draw(QVector<Process>v,float avg_w){
     ui->gantt_chart->clear();
     int n=v.size();
+
     ui->gantt_chart->setColumnCount(n);
     ui->gantt_chart->setRowCount(1);
     QStringList h;
@@ -234,10 +244,11 @@ void MainWindow::draw(QVector<Process>v,float avg_w){
         if(v[i].get_process_burst_time())
             ui->gantt_chart->setColumnWidth(i,  v[i].get_process_burst_time()*1080/total_time);
     }
+    double result = (TTforAVG/(float)NforAVG)+avg_w;
     ui->gantt_chart->setHorizontalHeaderLabels(h2);
     ui->avg_wait->setText("Average Waiting Time:           "+QString::number(avg_w));
-    //timer.start(total_time * 1000);
-   // elapsedTimer.start();
+    ui->avg_turn->setText("Average Turnaround Time:           "+QString::number(result));
+
 }
 
 void MainWindow::set_process_time_line(QVector<Process>v){
@@ -444,6 +455,8 @@ void MainWindow::on_AddDynamically_clicked()
               ui->data_table_2->item(0,2)->text().toInt(),
               priority);
     v.push_back(p);
+    TTforAVG +=p.get_process_burst_time();
+    NforAVG += 1;
     QString algorithm =ui->algorithm_comboBox->currentText();
     QString algo_type;
     if(algorithm =="3. Priority" || algorithm=="2. SJF"){
