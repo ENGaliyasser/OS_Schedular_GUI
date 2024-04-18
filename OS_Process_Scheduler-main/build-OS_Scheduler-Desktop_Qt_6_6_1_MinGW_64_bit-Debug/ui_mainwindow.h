@@ -359,7 +359,7 @@ public:
         label_2->setFont(font9);
         horizontalLayoutWidget = new QWidget(centralwidget);
         horizontalLayoutWidget->setObjectName("horizontalLayoutWidget");
-        horizontalLayoutWidget->setGeometry(QRect(530, 570, 521, 87));
+        horizontalLayoutWidget->setGeometry(QRect(500, 570, 521, 87));
         horizontalLayout_7 = new QHBoxLayout(horizontalLayoutWidget);
         horizontalLayout_7->setObjectName("horizontalLayout_7");
         horizontalLayout_7->setContentsMargins(0, 0, 0, 0);
