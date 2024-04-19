@@ -21,6 +21,7 @@ int totaltime=1;
 int TTforAVG=0;
 int NforAVG=0;
 int CurrentTime=1;
+QVector<Process> addedProcesses;
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -460,7 +461,10 @@ void MainWindow::on_AddDynamically_clicked()
               ui->data_table_2->item(0,1)->text().toInt(),
               ui->data_table_2->item(0,2)->text().toInt(),
               priority);
-    v.push_back(p);
+    addedProcesses.push_back(p);
+    for(int i=0;i<addedProcesses.size();i++){
+        v.push_back(addedProcesses[i]);
+    }
     TTforAVG +=p.get_process_burst_time();
     NforAVG += 1;
     QString algorithm =ui->algorithm_comboBox->currentText();
