@@ -26,6 +26,9 @@ void findWaitingTime( )
     int complete = 0, currentTime = 0, min_remaining_time = INT_MAX;
     int shortest = 0, finish_time;
     bool check = false;
+    bool oldcheck;
+    int idleStart;
+    int idleEnd;
     //GanttChart.clear();
     // Process until all processes get completed
     while (complete != proc.size()) {
@@ -40,7 +43,15 @@ void findWaitingTime( )
         }
 
         if (check == false) {
+            inProgress.push_back(0);
+            idleStart=currentTime;
             currentTime++;
+            idleEnd=currentTime;
+            GanntChartSection section;
+            section.process = 0;
+            section.start = idleStart;
+            section.end = idleEnd;
+            GanttChart.push_back(section);
             continue;
         }
 
@@ -119,17 +130,11 @@ QVector<Process> findavgTime(QVector<Process>v, float& avg_waiting)
         proc.push_back(in_p);
     }
     QVector<Process> Draw;
-    //vector<int> wt(n);
-    //vector<int> tat(n);
-    int total_wt = 0,total_tat = 0;
 
-    // Function to find waiting time of all
-    // processes
+    int total_wt = 0,total_tat = 0;
 
     findWaitingTime();
 
-    // Function to find turn around time for
-    // all processes
     findTurnAroundTime();
 
     // Display processes along with all
@@ -153,13 +158,39 @@ QVector<Process> findavgTime(QVector<Process>v, float& avg_waiting)
          << (float)total_wt / (float)(proc.size());
     cout << "\nAverage turn around time = "
          << (float)total_tat / (float)(proc.size());
+
     for (const GanntChartSection& section : GanttChart) {
         unsigned int burst_time = section.end - section.start;
         int arrival_time = section.start;
         Process p(section.process, burst_time, arrival_time, 0,section.start,section.end); // Setting priority to 0, you can change as needed
         Draw.push_back(p);
     }
+    QVector<Process> mergedProcesses;
 
-
+    if (!Draw.isEmpty()) {
+        Process mergedProcess = Draw[0];
+        int sumBurstTime = mergedProcess.get_end_time() - mergedProcess.get_start_time(); // Initialize sumBurstTime with the burst time of the first process
+        for (int i = 1; i < Draw.size(); ++i) {
+            if (Draw[i].get_process_Id() == 0 && Draw[i - 1].get_process_Id() == 0) {
+                // Merge successive processes with ID 0
+                mergedProcess.set_end_time(Draw[i].get_end_time());
+                sumBurstTime += Draw[i].get_end_time() - Draw[i].get_start_time(); // Add burst time of the current process
+            } else {
+                // Add the sum of burst time to the merged process
+                mergedProcess.set_process_burst_time(sumBurstTime);
+                // Add the merged process to the list
+                mergedProcesses.push_back(mergedProcess);
+                // Start a new merged process
+                mergedProcess = Draw[i];
+                // Reset the sum of burst time for the new merged process
+                sumBurstTime = mergedProcess.get_end_time() - mergedProcess.get_start_time();
+            }
+        }
+        // Add the sum of burst time to the last merged process
+        mergedProcess.set_process_burst_time(sumBurstTime);
+        // Add the last merged process to the list
+        mergedProcesses.push_back(mergedProcess);
+    }
+    Draw = mergedProcesses;
     return Draw;
 }

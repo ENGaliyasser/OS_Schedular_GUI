@@ -229,7 +229,8 @@ Makefile: ../OS_Scheduler/OS_Scheduler.pro C:/Qt/6.6.1/mingw_64/mkspecs/win32-g+
 		C:/Qt/6.6.1/mingw_64/lib/Qt6Gui.prl \
 		C:/Qt/6.6.1/mingw_64/lib/Qt6Core.prl \
 		C:/Qt/6.6.1/mingw_64/lib/Qt6EntryPoint.prl \
-		C:/Qt/6.6.1/mingw_64/mkspecs/features/build_pass.prf
+		C:/Qt/6.6.1/mingw_64/mkspecs/features/build_pass.prf \
+		../OS_Scheduler/resources.qrc
 	$(QMAKE) -o Makefile ..\OS_Scheduler\OS_Scheduler.pro -spec win32-g++ "CONFIG+=qtquickcompiler"
 C:/Qt/6.6.1/mingw_64/mkspecs/features/spec_pre.prf:
 C:/Qt/6.6.1/mingw_64/mkspecs/features/device_config.prf:
@@ -391,6 +392,7 @@ C:/Qt/6.6.1/mingw_64/lib/Qt6Gui.prl:
 C:/Qt/6.6.1/mingw_64/lib/Qt6Core.prl:
 C:/Qt/6.6.1/mingw_64/lib/Qt6EntryPoint.prl:
 C:/Qt/6.6.1/mingw_64/mkspecs/features/build_pass.prf:
+../OS_Scheduler/resources.qrc:
 qmake: FORCE
 	@$(QMAKE) -o Makefile ..\OS_Scheduler\OS_Scheduler.pro -spec win32-g++ "CONFIG+=qtquickcompiler"
 

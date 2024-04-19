@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+<file alias="img.ico">E:/OS_Schedular_GUI/OS_Process_Scheduler-main/img.ico</file>
+</qresource>
+</RCC>

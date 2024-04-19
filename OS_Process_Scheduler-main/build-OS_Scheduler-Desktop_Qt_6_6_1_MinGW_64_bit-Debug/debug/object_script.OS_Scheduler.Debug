@@ -1,0 +1,10 @@
+debug/fcfs_algorithm.o
+debug/main.o
+debug/mainwindow.o
+debug/preemative_sjf.o
+debug/priority_algorithm.o
+debug/process.o
+debug/round_robin.o
+debug/sjf_algorithm.o
+debug/qrc_resources.o
+debug/moc_mainwindow.o

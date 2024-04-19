@@ -1,0 +1,10 @@
+release/fcfs_algorithm.o
+release/main.o
+release/mainwindow.o
+release/preemative_sjf.o
+release/priority_algorithm.o
+release/process.o
+release/round_robin.o
+release/sjf_algorithm.o
+release/qrc_resources.o
+release/moc_mainwindow.o
