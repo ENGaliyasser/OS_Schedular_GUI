@@ -160,7 +160,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 2: _t->on_simulate_button_clicked(); break;
         case 3: _t->openWidget(); break;
         case 4: _t->on_AddDynamically_clicked(); break;
-        case 5: _t->on_algorithm_comboBox_textHighlighted((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        //case 5: _t->on_algorithm_comboBox_textHighlighted((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
         default: ;
         }
     }
