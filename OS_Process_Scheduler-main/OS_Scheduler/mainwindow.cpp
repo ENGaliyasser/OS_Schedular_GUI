@@ -17,9 +17,10 @@
 #include <QHash>
 QVector<int> inProgress;
 int totalWidth = 0; // Total width of all rectangles
-int totaltime=0;
+int totaltime=1;
 int TTforAVG=0;
 int NforAVG=0;
+int CurrentTime=1;
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -111,7 +112,7 @@ bool MainWindow::vaild_data(){
              item = ui->data_table->item(i,3);
              if (!item || item->text().isEmpty() || item->text().toInt()<0)
              {
-                 QMessageBox::critical(this,"error","please enter vaild data !!");
+                 QMessageBox::critical(this,"Error","Please Enter Vaild Data !!");
                 return 0;
              }
         }
@@ -122,7 +123,7 @@ bool MainWindow::vaild_data(){
                 (!item2 || item2->text().isEmpty()||item2->text().toInt()<0)    ||
                 (!item3 || item3->text().isEmpty()||item3->text().toInt()<0)   )
         {
-            QMessageBox::critical(this,"error","please enter vaild data !!");
+            QMessageBox::critical(this,"Error","Please Enter Vaild Data !!");
            return 0;
         }
     }
@@ -132,8 +133,13 @@ bool MainWindow::vaild_data(){
 
 void MainWindow::on_simulate_button_clicked()
 {
+    if(CurrentTime!=totaltime){
+        QMessageBox::critical(this,"Error","Can't Simulate During RUNTIME");
+    }
+    else{
     NforAVG=0;
     TTforAVG=0;
+    totaltime=1;
     inProgress.clear();
     QTimer *timer = new QTimer(this);
     timer->stop();
@@ -180,15 +186,14 @@ void MainWindow::on_simulate_button_clicked()
         else if(algorithm=="4. Round Robin"){
             int quantum=ui->quantum_value->value();
             if(quantum==0){
-                QMessageBox::critical(this,"error","please enter vaild quantum !!");
+                QMessageBox::critical(this,"Error","Please Enter Vaild Quantum !!");
                 return;
             }
             processes=round_robin::RR(v,quantum,avg_waiting);
         }
 
-        for(int i=0;i<processes.length();i++){
-            totaltime+= processes[i].get_process_burst_time();
-        }
+
+        totaltime = processes[processes.size()-1].get_end_time();
         qDebug()<<"Total time = "<<totaltime;
         //Start the timer
 
@@ -196,7 +201,7 @@ void MainWindow::on_simulate_button_clicked()
         connect(timer, &QTimer::timeout, [=]() {
 
             ui->timerLabel->setText(QString::number(secondsElapsed++) + " seconds");
-
+            CurrentTime = secondsElapsed-1;
             // Stop the timer after 60 seconds
             if (secondsElapsed >totaltime) {
                 secondsElapsed = 0;
@@ -214,6 +219,7 @@ void MainWindow::on_simulate_button_clicked()
         set_process_time_line(processes);
     }
 }
+}
 
 void MainWindow::draw(QVector<Process>v,float avg_w){
     ui->gantt_chart->clear();
@@ -222,7 +228,7 @@ void MainWindow::draw(QVector<Process>v,float avg_w){
     ui->gantt_chart->setColumnCount(n);
     ui->gantt_chart->setRowCount(1);
     QStringList h;
-    h<<"time";
+    h<<"Time";
     ui->gantt_chart->setVerticalHeaderLabels(h);
 
     QStringList h2;
@@ -247,7 +253,7 @@ void MainWindow::draw(QVector<Process>v,float avg_w){
     double result = (TTforAVG/(float)NforAVG)+avg_w;
     ui->gantt_chart->setHorizontalHeaderLabels(h2);
     ui->avg_wait->setText("Average Waiting Time:           "+QString::number(avg_w));
-    ui->avg_turn->setText("Average Turnaround Time:           "+QString::number(result));
+    ui->avg_turn->setText("Average Turnaround Time:    "+QString::number(result));
 
 }
 
@@ -257,7 +263,7 @@ void MainWindow::set_process_time_line(QVector<Process>v){
     ui->timeline->setColumnCount(3);
     ui->timeline->setRowCount(n);
     QStringList h;
-    h<<"process Id"<<"start time"<<"end time";
+    h<<"Process ID"<<"Start Time"<<"End Time";
     ui->timeline->setHorizontalHeaderLabels(h);
 
     for(int i=0;i<n;i++){
@@ -292,30 +298,12 @@ protected:
     void paintEvent(QPaintEvent *event) override {
         Q_UNUSED(event)
         QPainter painter(this);
-        painter.setPen(Qt::black);
-        painter.setFont(QFont("Arial", 12));
 
         int rectWidth = 50; // Width of each rectangle
         int margin = 20; // Margin around the rectangles
 
         // Draw rectangles and values
         for (int i = 0; i < values.size(); ++i) {
-            // QRect rect(margin + i * rectWidth, margin, rectWidth, height() - 2 * margin);
-            // // Set the text color and font
-            // QColor textColor(0, 0, 0); // White color
-            // QFont textFont("Berlin Sans FB Demi", 12); // Example font
-            // painter.setPen(textColor);
-            // painter.setFont(textFont);
-
-            // painter.drawText(rect, Qt::AlignCenter, QString::number(values[i]));
-            // // Set the outline color of the rectangle
-            // QColor backgroundColor(52,52,52);
-            // painter.setPen(backgroundColor); // Set your desired outline color using RGB or hex
-            // // Set the fill color of the rectangle
-            // QColor fillColor(170, 0, 0,);
-            // painter.setBrush(fillColor);
-            // painter.drawRect(rect);
-
             QRect rect(margin + i * rectWidth, margin, rectWidth, height() - 2 * margin);
 
             // Set the fill color of the rectangle
@@ -370,7 +358,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->data_table->setRowCount(0);
     ui->data_table->hideColumn(3);
     QStringList h;
-    h<<"process id"<<"burst time"<<"arrival time"<<"priority";
+    h<<"Process ID"<<"Burst Time"<<"Arrival Time"<<"Priority";
     ui->data_table->setHorizontalHeaderLabels(h);
     ui->data_table->setItem(0,0, new QTableWidgetItem);
     // Set background color for header sections
@@ -417,15 +405,14 @@ void MainWindow::openWidget() {
 
     // Set widget's attribute
     widget->setAttribute(Qt::WA_DeleteOnClose); // Delete widget on close
-
     // Set up the scroll area
     scrollArea->setWidget(widget);
-
     // Resize the widget to the size of the scroll area
     scrollArea->setWidgetResizable(true);
 
     // Set scroll policy for horizontal scrollbar
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     // Set background color for the widget
     QColor backgroundColor("#121212"); // RGBA color: RGB(170, 0, 0), Alpha: 100 (transparency)
@@ -444,6 +431,25 @@ void MainWindow::openWidget() {
 
 void MainWindow::on_AddDynamically_clicked()
 {
+
+    /* Validate Data */
+    QTableWidgetItem* item;
+    QTableWidgetItem* item1;
+    QTableWidgetItem* item2;
+    QTableWidgetItem* item3;
+    item1 = ui->data_table_2->item(0,0);
+    item2 = ui->data_table_2->item(0,1);
+    item3 = ui->data_table_2->item(0,2);
+    if (    (!item1 || item1->text().isEmpty()||item1->text().toInt()<0)    ||
+        (!item2 || item2->text().isEmpty()||item2->text().toInt()<0)    ||
+        (!item3 || item3->text().isEmpty()||item3->text().toInt()<0||item3->text().toInt()<CurrentTime)
+
+        )
+    {
+        QMessageBox::critical(this,"Error","Please Enter Vaild Data !!");
+
+    }
+    else{
     inProgress.clear();
     QVector<Process>v = get_data_from_table();
     int priority=0;
@@ -488,14 +494,15 @@ void MainWindow::on_AddDynamically_clicked()
     else if(algorithm=="4. Round Robin"){
         int quantum=ui->quantum_value->value();
         if(quantum==0){
-            QMessageBox::critical(this,"error","please enter vaild quantum !!");
+            QMessageBox::critical(this,"Error","Please Enter Vaild Quantum !!");
             return;
         }
         processes=round_robin::RR(v,quantum,avg_waiting);
     }
     ui->avg_wait->setText("Average Waiting Time:           "+QString::number(avg_waiting));
-    totaltime+=ui->data_table_2->item(0,1)->text().toInt();
+    totaltime+=(ui->data_table_2->item(0,1)->text().toInt());
     draw(processes,avg_waiting);
     set_process_time_line(processes);
+    }
 }
 
