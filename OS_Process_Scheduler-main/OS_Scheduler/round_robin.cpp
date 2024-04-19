@@ -146,6 +146,11 @@ bool RoundRobin::isEndOfSched() {
 /* SCHEDULER */
 void RoundRobin::startScheduling() {
     timer = queueOfAllProcesses[0].arrivalTime;
+    if(timer){
+        GanttChart idle (0,0);
+        idle.setEnd(timer);
+        runningProcesses.push_back(idle);
+    }
     for(int i=0;i<timer;i++){
         inProgress.push_back(0);
     }
