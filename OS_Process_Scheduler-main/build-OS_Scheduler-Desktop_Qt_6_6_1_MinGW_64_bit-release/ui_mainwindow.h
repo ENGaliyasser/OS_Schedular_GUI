@@ -64,6 +64,7 @@ public:
     QTableWidget *data_table_2;
     QLabel *label_3;
     QPushButton *AddDynamically;
+    QLabel *avg_turn;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -265,7 +266,7 @@ public:
         gantt_chart->setStyleSheet(QString::fromUtf8("background-color: rgb(18, 18, 18);"));
         avg_wait = new QLabel(centralwidget);
         avg_wait->setObjectName("avg_wait");
-        avg_wait->setGeometry(QRect(520, 430, 531, 61));
+        avg_wait->setGeometry(QRect(500, 400, 531, 51));
         QFont font5;
         font5.setFamilies({QString::fromUtf8("Berlin Sans FB Demi")});
         font5.setPointSize(20);
@@ -395,6 +396,13 @@ public:
         AddDynamically->setStyleSheet(QString::fromUtf8("background-color: rgb(52, 52, 52);\n"
 "color: rgb(255, 255, 255);\n"
 "hover :{ background-color: rgb(0, 0, 0); };"));
+        avg_turn = new QLabel(centralwidget);
+        avg_turn->setObjectName("avg_turn");
+        avg_turn->setGeometry(QRect(500, 470, 531, 51));
+        avg_turn->setFont(font5);
+        avg_turn->setStyleSheet(QString::fromUtf8(" border-style: dashed;\n"
+"  border-color: #343434;\n"
+"  border-width: 5px;"));
         MainWindow->setCentralWidget(centralwidget);
 
         retranslateUi(MainWindow);
@@ -433,6 +441,7 @@ public:
         ___qtablewidgetitem3->setText(QCoreApplication::translate("MainWindow", "priority", nullptr));
         label_3->setText(QCoreApplication::translate("MainWindow", "Add Process during Runtime", nullptr));
         AddDynamically->setText(QCoreApplication::translate("MainWindow", "Add", nullptr));
+        avg_turn->setText(QCoreApplication::translate("MainWindow", "Average Turnaround Time : ", nullptr));
     } // retranslateUi
 
 };
